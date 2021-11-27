@@ -1,0 +1,16 @@
+version: '4.2'
+
+networks:
+  default:
+
+services:
+  db:
+    image: mysql:5.7
+    container_name: recordsdb
+    ports:
+      - 3306:3306
+    volumes:
+      - "./.data/db:/var/lib/mysql"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: recordsdb
