@@ -7,4 +7,6 @@ import java.util.List;
 public interface RecordManagerService {
 
     ResponseEntity<List<String>> getRecords(String parent);
+
+    ResponseEntity<Object> addRecords(String parent, List<String> records);
 }

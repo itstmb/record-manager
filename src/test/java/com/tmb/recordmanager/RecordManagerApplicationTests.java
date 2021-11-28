@@ -1,5 +1,7 @@
 package com.tmb.recordmanager;
 
+import com.tmb.recordmanager.mocks.EntityManagerMock;
+import com.tmb.recordmanager.repository.entity.Record;
 import com.tmb.recordmanager.rest.RecordManagerController;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 @SpringBootTest
 @ContextConfiguration(classes = {RecordManagerTestConfiguration.class})
@@ -20,6 +24,9 @@ class RecordManagerApplicationTests {
 
     @Autowired
     RecordManagerController recordManagerController;
+
+    @Autowired
+    private EntityManagerMock entityManagerMock;
 
     @Test
     public void getEmptyRecordsList() {
@@ -46,5 +53,21 @@ class RecordManagerApplicationTests {
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(expectedRecords, response.getBody());
+    }
+
+    @Test
+    public void addValidRecords() {
+        ArrayList<String> recordsToSave = new ArrayList<>(Arrays.asList("record1", "record2", "record3"));
+        String parent = "parent_record";
+
+        HashSet<Record> expectedRecords = new HashSet<>();
+        for (String recordName : recordsToSave) {
+            expectedRecords.add(new Record(recordName, parent));
+        }
+
+        ResponseEntity<Object> response = recordManagerController.addRecords(parent, recordsToSave);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(expectedRecords, entityManagerMock.getItems());
     }
 }
