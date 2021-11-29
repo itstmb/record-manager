@@ -10,5 +10,5 @@ public interface RecordManagerRepository {
 
     List<Record> getRecords(String parent);
 
-    Record save(Record record);
+    void save(Record record);
 }

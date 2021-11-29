@@ -25,8 +25,7 @@ public class RecordManagerRepositoryImpl implements RecordManagerRepository {
         return null;
     }
 
-    public Record save(Record record) {
+    public void save(Record record) {
         entityManager.persist(record);
-        return record;
     }
 }
