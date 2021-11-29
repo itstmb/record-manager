@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
 
 @Service
@@ -41,7 +42,8 @@ public class RecordManagerServiceImpl implements RecordManagerService {
         }
         genericValidationFactory.getValidator(AddRecordsValidator.validatorName).validate(records);
 
-        for (String recordString : records) {
+        HashSet<String> recordsWithoutDuplicates = new HashSet<>(records);
+        for (String recordString : recordsWithoutDuplicates) {
             this.recordManagerRepository.save(new Record(recordString, parent));
         }
 
