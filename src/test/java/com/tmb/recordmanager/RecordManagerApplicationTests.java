@@ -7,9 +7,7 @@ import com.tmb.recordmanager.rest.RecordManagerController;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -33,12 +31,6 @@ class RecordManagerApplicationTests {
 
     @Autowired
     GenericValidationFactory genericValidationFactory;
-
-    @BeforeAll
-    public void setup() {
-        Mockito.when(genericValidationFactory.getValidator(""));
-    }
-
 
     @Test
     public void getEmptyRecordsList() {
