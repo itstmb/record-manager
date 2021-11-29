@@ -1,6 +1,8 @@
 package com.tmb.recordmanager.business_logic;
 
+import com.tmb.recordmanager.business_logic.validation.AddRecordsValidator;
 import com.tmb.recordmanager.business_logic.validation.GenericValidationFactory;
+import com.tmb.recordmanager.business_logic.validation.ParentValidator;
 import com.tmb.recordmanager.repository.RecordManagerRepository;
 import com.tmb.recordmanager.repository.entity.Record;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +18,7 @@ import java.util.List;
 @Slf4j
 public class RecordManagerServiceImpl implements RecordManagerService {
 
-    private GenericValidationFactory genericValidationFactory;
+    private final GenericValidationFactory genericValidationFactory;
     private final RecordManagerRepository recordManagerRepository;
 
     @Autowired
@@ -35,9 +37,9 @@ public class RecordManagerServiceImpl implements RecordManagerService {
     @Transactional
     public ResponseEntity<Object> addRecords(String parent, List<String> records) {
         if (parent != null) { // a null parent is valid and indicates a root level node
-            genericValidationFactory.getValidator("parentValidator").validate(parent);
+            genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
         }
-        genericValidationFactory.getValidator("addRecordsValidator").validate(records);
+        genericValidationFactory.getValidator(AddRecordsValidator.validatorName).validate(records);
 
         for (String recordString : records) {
             this.recordManagerRepository.save(new Record(recordString, parent));

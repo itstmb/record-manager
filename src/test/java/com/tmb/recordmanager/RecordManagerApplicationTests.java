@@ -1,12 +1,15 @@
 package com.tmb.recordmanager;
 
+import com.tmb.recordmanager.business_logic.validation.GenericValidationFactory;
 import com.tmb.recordmanager.mocks.EntityManagerMock;
 import com.tmb.recordmanager.repository.entity.Record;
 import com.tmb.recordmanager.rest.RecordManagerController;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -26,7 +29,16 @@ class RecordManagerApplicationTests {
     RecordManagerController recordManagerController;
 
     @Autowired
-    private EntityManagerMock entityManagerMock;
+    EntityManagerMock entityManagerMock;
+
+    @Autowired
+    GenericValidationFactory genericValidationFactory;
+
+    @BeforeAll
+    public void setup() {
+        Mockito.when(genericValidationFactory.getValidator(""));
+    }
+
 
     @Test
     public void getEmptyRecordsList() {

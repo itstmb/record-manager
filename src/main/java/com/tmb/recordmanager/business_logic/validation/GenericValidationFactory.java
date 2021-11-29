@@ -11,7 +11,6 @@ import java.util.Map;
 @Slf4j
 public class GenericValidationFactory {
 
-
     private final Map<String, BasicValidator> validatorsMap;
 
     public GenericValidationFactory(ApplicationContext applicationContext) {
