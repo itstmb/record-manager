@@ -16,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -97,12 +94,41 @@ class RecordManagerApplicationTests {
     }
 
     @Test
+    public void addDuplicateRecords() {
+        ArrayList<String> recordsToSave = new ArrayList<>(Arrays.asList("record1", "record2", "record1", "record1", "record2"));
+
+        HashSet<Record> expectedRecords = new HashSet<Record>() {{
+            add(new Record(recordsToSave.get(0), null));
+            add(new Record(recordsToSave.get(1), null));
+        }};
+
+        ResponseEntity<Object> response = recordManagerController.addRecords(recordsToSave, null);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(expectedRecords, entityManagerMock.getItems());
+    }
+
+    @Test
     public void addWithNonexistingParent() {
         String recordToSave = "record";
         String parent = "NonexistingParent";
 
-        Assertions.assertThrows(ValidationException.class, () -> {
-            recordManagerController.addRecords(Collections.singletonList(recordToSave), parent);
-        });
+        Assertions.assertThrows(ValidationException.class,
+                () -> recordManagerController.addRecords(Collections.singletonList(recordToSave), parent));
+    }
+
+    @Test
+    public void addExistingRecord() {
+        String recordToSave = "record";
+        recordManagerController.addRecords(Collections.singletonList(recordToSave), null);
+
+        Assertions.assertThrows(ValidationException.class,
+                () -> recordManagerController.addRecords(Collections.singletonList(recordToSave), null));
+    }
+
+    @Test
+    public void addNullRecord() {
+        Assertions.assertThrows(ValidationException.class,
+                () -> recordManagerController.addRecords(null, null));
     }
 }
