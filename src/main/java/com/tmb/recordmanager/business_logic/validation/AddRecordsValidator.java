@@ -7,6 +7,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Component
 @AllArgsConstructor
@@ -36,7 +38,10 @@ public class AddRecordsValidator implements BasicValidator {
             }
         }
 
-        List<String> recordStrings = (List<String>) o;
+        List<String> recordStrings = recordObjects.stream()
+                .map(recordObject -> Objects.toString(recordObject, null))
+                .collect(Collectors.toList());
+
         for (String record : recordStrings) {
             if (recordManagerRepository.getRecord(record) != null) {
                 log.info("{} validation error - record already exists", validatorName);
