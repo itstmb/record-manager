@@ -4,6 +4,7 @@ import com.tmb.recordmanager.business_logic.validation.GenericValidationFactory;
 import com.tmb.recordmanager.mocks.EntityManagerMock;
 import com.tmb.recordmanager.repository.entity.Record;
 import com.tmb.recordmanager.rest.RecordManagerController;
+import com.tmb.recordmanager.rest.exceptions.ValidationException;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
 import java.util.ArrayList;
@@ -20,6 +22,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 @SpringBootTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(classes = {RecordManagerTestConfiguration.class})
 class RecordManagerApplicationTests {
 
@@ -62,14 +65,32 @@ class RecordManagerApplicationTests {
     @Test
     public void addValidRecords() {
         ArrayList<String> recordsToSave = new ArrayList<>(Arrays.asList("record1", "record2", "record3"));
-        String parent = "parent_record";
 
         HashSet<Record> expectedRecords = new HashSet<>();
+        for (String recordName : recordsToSave) {
+            expectedRecords.add(new Record(recordName, null));
+        }
+
+        ResponseEntity<Object> response = recordManagerController.addRecords(recordsToSave, null);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(expectedRecords, entityManagerMock.getItems());
+    }
+
+    @Test
+    public void addValidRecordsWithParent() {
+        String parent = "parent_record";
+        recordManagerController.addRecords(Collections.singletonList(parent), null);
+
+        ArrayList<String> recordsToSave = new ArrayList<>(Arrays.asList("record1", "record2", "record3"));
+
+        HashSet<Record> expectedRecords = new HashSet<>();
+        expectedRecords.add(new Record(parent, null));
         for (String recordName : recordsToSave) {
             expectedRecords.add(new Record(recordName, parent));
         }
 
-        ResponseEntity<Object> response = recordManagerController.addRecords(parent, recordsToSave);
+        ResponseEntity<Object> response = recordManagerController.addRecords(recordsToSave, parent);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(expectedRecords, entityManagerMock.getItems());
@@ -80,8 +101,8 @@ class RecordManagerApplicationTests {
         String recordToSave = "record";
         String parent = "NonexistingParent";
 
-        ResponseEntity<Object> response = recordManagerController.addRecords(parent, Collections.singletonList(recordToSave));
-
-        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        Assertions.assertThrows(ValidationException.class, () -> {
+            recordManagerController.addRecords(Collections.singletonList(recordToSave), parent);
+        });
     }
 }

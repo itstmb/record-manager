@@ -1,5 +1,7 @@
 package com.tmb.recordmanager.mocks;
 
+import com.tmb.recordmanager.repository.entity.Record;
+
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaDelete;
@@ -9,10 +11,11 @@ import javax.persistence.metamodel.Metamodel;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class EntityManagerMock implements EntityManager {
 
-    private final HashSet<Object> items;
+    private final HashSet<Record> items;
 
     public EntityManagerMock() {
         this.items = new HashSet<>();
@@ -20,10 +23,10 @@ public class EntityManagerMock implements EntityManager {
 
     @Override
     public void persist(Object entity) {
-        items.add(entity);
+        items.add((Record)entity);
     }
 
-    public HashSet<Object> getItems() {
+    public HashSet<Record> getItems() {
         return items;
     }
 
@@ -33,13 +36,21 @@ public class EntityManagerMock implements EntityManager {
     }
 
     @Override
-    public void remove(Object entity) {
+    public <T> T find(Class<T> entityClass, Object primaryKey) {
+        List<Record> found = items.stream()
+                .filter(item -> item.getName().equals(primaryKey))
+                .collect(Collectors.toList());
 
+        if (!found.isEmpty()) {
+            Record record = new Record(found.get(0).getName(), found.get(0).getParent());
+            return (T) record;
+        }
+        return null;
     }
 
     @Override
-    public <T> T find(Class<T> entityClass, Object primaryKey) {
-        return null;
+    public void remove(Object entity) {
+
     }
 
     @Override

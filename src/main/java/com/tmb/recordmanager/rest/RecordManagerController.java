@@ -27,8 +27,8 @@ public class RecordManagerController extends RecordManagerExceptionHandler {
     }
 
     @PutMapping
-    public ResponseEntity<Object> addRecords(@RequestParam(required = false) String parent,
-                                             @RequestParam List<String> records) {
+    public ResponseEntity<Object> addRecords(@RequestParam List<String> records,
+                                             @RequestParam(required = false) String parent) {
         return recordManagerService.addRecords(parent, records);
     }
 
