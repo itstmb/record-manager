@@ -1,8 +1,11 @@
 package com.tmb.recordmanager.business_logic;
 
+import com.tmb.recordmanager.business_logic.validation.GenericValidationFactory;
 import com.tmb.recordmanager.repository.RecordManagerRepository;
 import com.tmb.recordmanager.repository.entity.Record;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -10,13 +13,17 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 @Service
+@Slf4j
 public class RecordManagerServiceImpl implements RecordManagerService {
 
+    private GenericValidationFactory genericValidationFactory;
     private final RecordManagerRepository recordManagerRepository;
 
     @Autowired
-    public RecordManagerServiceImpl(RecordManagerRepository recordManagerRepository) {
+    public RecordManagerServiceImpl(RecordManagerRepository recordManagerRepository,
+                                    GenericValidationFactory genericValidationFactory) {
         this.recordManagerRepository = recordManagerRepository;
+        this.genericValidationFactory = genericValidationFactory;
     }
 
     @Override
@@ -27,9 +34,15 @@ public class RecordManagerServiceImpl implements RecordManagerService {
     @Override
     @Transactional
     public ResponseEntity<Object> addRecords(String parent, List<String> records) {
+        if (parent != null) { // a null parent is valid and indicates a root level node
+            genericValidationFactory.getValidator("parentValidator").validate(parent);
+        }
+        genericValidationFactory.getValidator("addRecordsValidator").validate(records);
+
         for (String recordString : records) {
             this.recordManagerRepository.save(new Record(recordString, parent));
         }
-        return null;
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

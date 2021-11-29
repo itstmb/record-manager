@@ -16,6 +16,11 @@ public class RecordManagerRepositoryImpl implements RecordManagerRepository {
     }
 
     @Override
+    public Record getRecord(String name) {
+        return entityManager.find(Record.class, name);
+    }
+
+    @Override
     public List<Record> getRecords(String parent) {
         return null;
     }

@@ -13,9 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 
 @SpringBootTest
@@ -69,5 +69,15 @@ class RecordManagerApplicationTests {
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(expectedRecords, entityManagerMock.getItems());
+    }
+
+    @Test
+    public void addWithNonexistingParent() {
+        String recordToSave = "record";
+        String parent = "NonexistingParent";
+
+        ResponseEntity<Object> response = recordManagerController.addRecords(parent, Collections.singletonList(recordToSave));
+
+        Assertions.assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
     }
 }
