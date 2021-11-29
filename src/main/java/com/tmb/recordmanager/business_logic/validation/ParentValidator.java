@@ -3,13 +3,11 @@ package com.tmb.recordmanager.business_logic.validation;
 import com.tmb.recordmanager.repository.RecordManagerRepository;
 import com.tmb.recordmanager.rest.exceptions.ValidationException;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 @Component
 @AllArgsConstructor
-@Getter
 @Slf4j
 public class ParentValidator implements BasicValidator {
 
@@ -32,7 +30,7 @@ public class ParentValidator implements BasicValidator {
 
         if (recordManagerRepository.getRecord(parent) == null) {
             log.info("{} validation error - parent {} doesn't exist.", validatorName, parent);
-            throw new ValidationException("Parent doesn't exist");
+            throw new ValidationException(String.format("Parent '%s' doesn't exist", parent));
         }
         return true;
     }
