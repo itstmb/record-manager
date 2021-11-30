@@ -35,6 +35,7 @@ Request params:
 * (Optional) (String) parent 
 
 example request: http://localhost:8080/api/record/?parent=parent_record 
+
 **Note**: not including a parent deletes the root node, which will recursively delete all other nodes.
 
 --------------------------------------------------------------------------------
