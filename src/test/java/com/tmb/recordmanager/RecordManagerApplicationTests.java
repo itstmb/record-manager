@@ -49,11 +49,11 @@ class RecordManagerApplicationTests {
     }
 
     @Test
-    public void getValidParent() {
-        // Add mock data from DB
-        ArrayList<String> expectedRecords = new ArrayList<>(Arrays.asList("one", "two", "three"));
+    public void getValidRecords() {
+        addValidRecords();
+        ArrayList<String> expectedRecords = new ArrayList<>(Arrays.asList("record1", "record2", "record3"));
 
-        ResponseEntity<Object> response = recordManagerController.getRecords("existingParent");
+        ResponseEntity<Object> response = recordManagerController.getRecords(null);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(expectedRecords, response.getBody());

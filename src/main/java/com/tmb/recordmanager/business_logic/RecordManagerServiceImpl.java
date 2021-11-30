@@ -31,15 +31,13 @@ public class RecordManagerServiceImpl implements RecordManagerService {
 
     @Override
     public ResponseEntity<List<String>> getRecords(String parent) {
-        return null;
+        genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
     }
 
     @Override
     @Transactional
     public ResponseEntity<Object> addRecords(String parent, List<String> records) {
-        if (parent != null) { // a null parent is valid and indicates a root level node
-            genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
-        }
+        genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
         genericValidationFactory.getValidator(AddRecordsValidator.validatorName).validate(records);
 
         HashSet<String> recordsWithoutDuplicates = new HashSet<>(records);

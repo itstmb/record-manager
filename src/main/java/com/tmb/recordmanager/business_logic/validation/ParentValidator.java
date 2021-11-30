@@ -17,8 +17,7 @@ public class ParentValidator implements BasicValidator {
     @Override
     public boolean validate(Object o) {
         if (o == null) {
-            log.info("{} validation error - object is null.", validatorName);
-            throw new ValidationException("Parent is null");
+            return true;
         }
 
         if (!(o instanceof String)) {
