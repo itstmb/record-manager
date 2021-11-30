@@ -11,6 +11,8 @@ import com.tmb.recordmanager.repository.RecordManagerRepository;
 import com.tmb.recordmanager.repository.RecordManagerRepositoryImpl;
 import com.tmb.recordmanager.rest.RecordManagerController;
 import org.hibernate.internal.SessionFactoryImpl;
+import org.hibernate.query.internal.QueryImpl;
+import org.mockito.Mockito;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -67,6 +69,11 @@ public class RecordManagerTestConfiguration {
     @Bean
     public EntityManagerMock entityManagerMock() {
         return new EntityManagerMock();
+    }
+
+    @Bean
+    public QueryImpl query() {
+        return Mockito.mock(QueryImpl.class);
     }
 
     @MockBean

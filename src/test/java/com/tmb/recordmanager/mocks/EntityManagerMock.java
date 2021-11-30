@@ -1,6 +1,8 @@
 package com.tmb.recordmanager.mocks;
 
 import com.tmb.recordmanager.repository.entity.Record;
+import org.hibernate.query.internal.QueryImpl;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
@@ -15,6 +17,9 @@ import java.util.stream.Collectors;
 
 public class EntityManagerMock implements EntityManager {
 
+    @Autowired
+    QueryImpl query;
+
     private final HashSet<Record> items;
 
     public EntityManagerMock() {
@@ -23,7 +28,7 @@ public class EntityManagerMock implements EntityManager {
 
     @Override
     public void persist(Object entity) {
-        items.add((Record)entity);
+        items.add((Record) entity);
     }
 
     public HashSet<Record> getItems() {
@@ -46,6 +51,16 @@ public class EntityManagerMock implements EntityManager {
             return (T) record;
         }
         return null;
+    }
+
+    @Override
+    public Query createQuery(String qlString) {
+        return query;
+    }
+
+    @Override
+    public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
+        return query;
     }
 
     @Override
@@ -149,11 +164,6 @@ public class EntityManagerMock implements EntityManager {
     }
 
     @Override
-    public Query createQuery(String qlString) {
-        return null;
-    }
-
-    @Override
     public <T> TypedQuery<T> createQuery(CriteriaQuery<T> criteriaQuery) {
         return null;
     }
@@ -165,11 +175,6 @@ public class EntityManagerMock implements EntityManager {
 
     @Override
     public Query createQuery(CriteriaDelete deleteQuery) {
-        return null;
-    }
-
-    @Override
-    public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
         return null;
     }
 

@@ -5,8 +5,10 @@ import com.tmb.recordmanager.mocks.EntityManagerMock;
 import com.tmb.recordmanager.repository.entity.Record;
 import com.tmb.recordmanager.rest.RecordManagerController;
 import com.tmb.recordmanager.rest.exceptions.ValidationException;
+import org.hibernate.query.Query;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpStatus;
@@ -33,12 +35,20 @@ class RecordManagerApplicationTests {
     @Autowired
     GenericValidationFactory genericValidationFactory;
 
+    @Autowired
+    Query query;
+
     @Test
     public void getEmptyRecordsList() {
-        ResponseEntity<Object> response = recordManagerController.getRecords(null);
+        ArrayList<String> expectedArray = new ArrayList<>();
+        addValidRecords();
+        ResponseEntity<Object> response = recordManagerController.getRecords("record1");
+
+        Mockito.when(query.setParameter((String) Mockito.any(), Mockito.any())).thenReturn(query);
+        Mockito.when(query.getResultList()).thenReturn(expectedArray);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals("", response.getBody());
+        Assertions.assertEquals(expectedArray, response.getBody());
     }
 
     @Test
@@ -49,8 +59,11 @@ class RecordManagerApplicationTests {
 
     @Test
     public void getValidRecords() {
+
         addValidRecords();
         ArrayList<String> expectedRecords = new ArrayList<>(Arrays.asList("record1", "record2", "record3"));
+
+        Mockito.when(query.getResultList()).thenReturn(expectedRecords);
 
         ResponseEntity<Object> response = recordManagerController.getRecords(null);
 

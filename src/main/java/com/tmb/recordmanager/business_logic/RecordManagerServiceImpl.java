@@ -34,9 +34,6 @@ public class RecordManagerServiceImpl implements RecordManagerService {
         genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
 
         List<String> records = this.recordManagerRepository.getRecords(parent);
-        if (records.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
         return new ResponseEntity<>(records, HttpStatus.OK);
     }
 

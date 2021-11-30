@@ -4,6 +4,7 @@ import com.tmb.recordmanager.repository.entity.Record;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.List;
 
 @Repository
@@ -22,13 +23,14 @@ public class RecordManagerRepositoryImpl implements RecordManagerRepository {
 
     @Override
     public List<String> getRecords(String parent) {
-        List<String> records;
+        List records;
         if (parent != null) {
-            records = entityManager.createQuery("select r.name from Record r where r.parent = :parent", String.class)
-                    .setParameter("parent", parent).getResultList();
+            TypedQuery<String> query = entityManager.createQuery("select r.name from Record r where r.parent = :parent", String.class);
+            query.setParameter("parent", parent);
+            records = query.getResultList();
         } else {
-            records = entityManager.createQuery("select r.name from Record r where r.parent is null", String.class)
-                    .getResultList();
+            TypedQuery<String> query = entityManager.createQuery("select r.name from Record r where r.parent is null", String.class);
+            records = query.getResultList();
         }
         return records;
     }
