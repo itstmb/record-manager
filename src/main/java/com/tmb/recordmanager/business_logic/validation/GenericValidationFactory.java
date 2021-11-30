@@ -1,6 +1,5 @@
 package com.tmb.recordmanager.business_logic.validation;
 
-import jdk.nashorn.internal.runtime.regexp.joni.exception.InternalException;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationContext;
@@ -23,7 +22,7 @@ public class GenericValidationFactory {
         BasicValidator validator = this.validatorsMap.get(validatorName);
         if (validator == null) {
             log.error("Cannot find BasicValidator bean object for target '{}'.", validatorName);
-            throw new InternalException("Cannot find BasicValidator");
+            throw new RuntimeException("Cannot find BasicValidator");
         } else {
             return validator;
         }
