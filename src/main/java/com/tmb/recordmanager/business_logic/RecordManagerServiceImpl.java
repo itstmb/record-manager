@@ -32,6 +32,7 @@ public class RecordManagerServiceImpl implements RecordManagerService {
     @Override
     public ResponseEntity<Object> getRecords(String parent) {
         genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
+        log.debug("GET request for parent '{}' is valid", parent);
 
         List<String> records = this.recordManagerRepository.getRecords(parent);
         return new ResponseEntity<>(records, HttpStatus.OK);
@@ -42,12 +43,14 @@ public class RecordManagerServiceImpl implements RecordManagerService {
     public ResponseEntity<Object> addRecords(String parent, List<String> records) {
         genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
         genericValidationFactory.getValidator(AddRecordsValidator.validatorName).validate(records);
+        log.debug("PUT request for parent '{}' and records {} is valid", parent, records);
 
         HashSet<String> recordsWithoutDuplicates = new HashSet<>(records);
         for (String recordString : recordsWithoutDuplicates) {
             this.recordManagerRepository.save(new Record(recordString, parent));
         }
 
+        log.info("Added nodes {} with parent '{}'", records, parent != null ? parent : "root");
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -55,23 +58,37 @@ public class RecordManagerServiceImpl implements RecordManagerService {
     @Transactional
     public ResponseEntity<Object> deleteRecords(String parent) {
         genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
-        int removedCount = deleteRecordAndChildren(parent);
+        log.debug("DELETE request for parent '{}' is valid", parent);
 
-        return new ResponseEntity<>(String.format("%d items removed.", removedCount),HttpStatus.OK);
+        int removedCount = deleteRecord(parent);
+
+        log.info("Removed node '{}' and all child nodes (total: {})", parent != null ? parent : "root", removedCount);
+        return new ResponseEntity<>(String.format("%d items removed.", removedCount), HttpStatus.OK);
     }
 
-    private int deleteRecordAndChildren(String parent) {
-        int removedCounter = 0;
-        List<String> records = this.recordManagerRepository.getRecords(parent);
-
-        for (String recordName : records) {
-            removedCounter += deleteRecordAndChildren(recordName);
-        }
+    private int deleteRecord(String parent) {
+        int removedNodesCounter = removeChildNodes(parent);
 
         if (parent != null) {
             this.recordManagerRepository.deleteRecord(parent);
-            removedCounter++;
+            removedNodesCounter++;
         }
-        return removedCounter;
+        return removedNodesCounter;
+    }
+
+    private int removeChildNodes(String parent) {
+        List<String> records = this.recordManagerRepository.getRecords(parent);
+
+        if (records.isEmpty()) {
+            log.debug("Node '{}' has no child nodes.", parent);
+        } else {
+            log.debug("Node '{}' has {} child nodes, deleting child nodes... ", parent, records.size());
+        }
+
+        int removedNodesCounter = 0;
+        for (String recordName : records) {
+            removedNodesCounter += deleteRecord(recordName);
+        }
+        return removedNodesCounter;
     }
 }

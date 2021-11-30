@@ -43,7 +43,5 @@ public class RecordManagerRepositoryImpl implements RecordManagerRepository {
     public void deleteRecord(String parent) {
         Record record = this.getRecord(parent);
         entityManager.remove(record);
-        entityManager.flush();
-        entityManager.clear();
     }
 }
