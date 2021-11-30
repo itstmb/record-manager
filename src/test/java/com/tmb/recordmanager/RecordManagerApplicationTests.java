@@ -59,7 +59,6 @@ class RecordManagerApplicationTests {
 
     @Test
     public void getValidRecords() {
-
         addValidRecords();
         ArrayList<String> expectedRecords = new ArrayList<>(Arrays.asList("record1", "record2", "record3"));
 
@@ -142,5 +141,30 @@ class RecordManagerApplicationTests {
     public void addNullRecord() {
         Assertions.assertThrows(ValidationException.class,
                 () -> recordManagerController.addRecords(null, null));
+    }
+
+    @Test
+    public void deleteExistingRecord() {
+        addValidRecords();
+
+        ResponseEntity<Object> response = recordManagerController.deleteRecords("record1");
+
+        HashSet<Record> expectedRecords = new HashSet<Record>() {{
+            add(new Record("record2", null));
+            add(new Record("record3", null));
+        }};
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(expectedRecords, entityManagerMock.getItems());
+    }
+
+    @Test
+    public void deleteRootRecord() {
+
+    }
+
+    @Test
+    public void deleteNonexistingRecord() {
+
     }
 }
