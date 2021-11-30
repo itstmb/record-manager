@@ -54,6 +54,11 @@ public class EntityManagerMock implements EntityManager {
     }
 
     @Override
+    public void remove(Object entity) {
+        this.items.remove(entity);
+    }
+
+    @Override
     public Query createQuery(String qlString) {
         return query;
     }
@@ -61,11 +66,6 @@ public class EntityManagerMock implements EntityManager {
     @Override
     public <T> TypedQuery<T> createQuery(String qlString, Class<T> resultClass) {
         return query;
-    }
-
-    @Override
-    public void remove(Object entity) {
-
     }
 
     @Override
