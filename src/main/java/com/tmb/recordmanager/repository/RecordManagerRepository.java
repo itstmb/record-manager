@@ -8,7 +8,7 @@ public interface RecordManagerRepository {
 
     Record getRecord(String name);
 
-    List<Record> getRecords(String parent);
+    List<String> getRecords(String parent);
 
     void save(Record record);
 }

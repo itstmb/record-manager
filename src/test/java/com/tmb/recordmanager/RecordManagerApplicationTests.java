@@ -5,8 +5,6 @@ import com.tmb.recordmanager.mocks.EntityManagerMock;
 import com.tmb.recordmanager.repository.entity.Record;
 import com.tmb.recordmanager.rest.RecordManagerController;
 import com.tmb.recordmanager.rest.exceptions.ValidationException;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +14,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -34,7 +35,7 @@ class RecordManagerApplicationTests {
 
     @Test
     public void getEmptyRecordsList() {
-        ResponseEntity<Object> response = recordManagerController.getRecords(StringUtils.EMPTY);
+        ResponseEntity<Object> response = recordManagerController.getRecords(null);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals("", response.getBody());
@@ -42,10 +43,8 @@ class RecordManagerApplicationTests {
 
     @Test
     public void getNonexistingParent() {
-        ResponseEntity<Object> response = recordManagerController.getRecords("nonexistingParent");
-
-        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        Assertions.assertNull(response.getBody());
+        Assertions.assertThrows(ValidationException.class,
+                () -> recordManagerController.getRecords("nonexistingParent"));
     }
 
     @Test

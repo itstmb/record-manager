@@ -21,8 +21,16 @@ public class RecordManagerRepositoryImpl implements RecordManagerRepository {
     }
 
     @Override
-    public List<Record> getRecords(String parent) {
-        return null;
+    public List<String> getRecords(String parent) {
+        List<String> records;
+        if (parent != null) {
+            records = entityManager.createQuery("select r.name from Record r where r.parent = :parent", String.class)
+                    .setParameter("parent", parent).getResultList();
+        } else {
+            records = entityManager.createQuery("select r.name from Record r where r.parent is null", String.class)
+                    .getResultList();
+        }
+        return records;
     }
 
     public void save(Record record) {

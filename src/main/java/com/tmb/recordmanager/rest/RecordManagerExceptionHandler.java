@@ -15,7 +15,7 @@ public class RecordManagerExceptionHandler {
     }
 
     @ExceptionHandler({Exception.class})
-    public ResponseEntity<String> handleException() {
+    public ResponseEntity<String> handleException(Exception ex) {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 }

@@ -17,8 +17,8 @@ public class RecordManagerController extends RecordManagerExceptionHandler {
     }
 
     @GetMapping
-    public ResponseEntity<Object> getRecords(@RequestParam String parent) {
-        return ResponseEntity.ok(parent);
+    public ResponseEntity<Object> getRecords(@RequestParam(required = false) String parent) {
+        return recordManagerService.getRecords(parent);
     }
 
     @GetMapping(value = "/all")
