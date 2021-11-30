@@ -37,7 +37,7 @@ class RecordManagerApplicationTests {
         ResponseEntity<Object> response = recordManagerController.getRecords(StringUtils.EMPTY);
 
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
-        Assertions.assertEquals(ArrayUtils.EMPTY_STRING_ARRAY, response.getBody());
+        Assertions.assertEquals("", response.getBody());
     }
 
     @Test
