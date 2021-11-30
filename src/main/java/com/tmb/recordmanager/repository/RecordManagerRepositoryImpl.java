@@ -23,7 +23,7 @@ public class RecordManagerRepositoryImpl implements RecordManagerRepository {
 
     @Override
     public List<String> getRecords(String parent) {
-        List records;
+        List<String> records;
         if (parent != null) {
             TypedQuery<String> query = entityManager.createQuery("select r.name from Record r where r.parent = :parent", String.class);
             query.setParameter("parent", parent);
