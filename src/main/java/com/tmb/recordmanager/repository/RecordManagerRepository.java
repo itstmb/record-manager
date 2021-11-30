@@ -11,4 +11,6 @@ public interface RecordManagerRepository {
     List<String> getRecords(String parent);
 
     void save(Record record);
+
+    void deleteRecord(String parent);
 }

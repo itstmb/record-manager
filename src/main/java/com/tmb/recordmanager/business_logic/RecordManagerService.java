@@ -9,4 +9,6 @@ public interface RecordManagerService {
     ResponseEntity<Object> getRecords(String parent);
 
     ResponseEntity<Object> addRecords(String parent, List<String> records);
+
+    ResponseEntity<Object> deleteRecords(String parent);
 }

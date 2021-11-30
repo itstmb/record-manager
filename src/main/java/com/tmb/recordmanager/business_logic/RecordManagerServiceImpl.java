@@ -50,4 +50,25 @@ public class RecordManagerServiceImpl implements RecordManagerService {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Override
+    @Transactional
+    public ResponseEntity<Object> deleteRecords(String parent) {
+        genericValidationFactory.getValidator(ParentValidator.validatorName).validate(parent);
+        int removedCount = deleteRecordAndChildren(parent);
+
+        return new ResponseEntity<>(String.format("%d items removed.", removedCount),HttpStatus.OK);
+    }
+
+    private int deleteRecordAndChildren(String parent) {
+        int removedCounter = 1;
+        List<String> records = this.recordManagerRepository.getRecords(parent);
+
+        for (String recordName : records) {
+            removedCounter += deleteRecordAndChildren(recordName);
+        }
+
+        this.recordManagerRepository.deleteRecord(parent);
+        return removedCounter;
+    }
 }

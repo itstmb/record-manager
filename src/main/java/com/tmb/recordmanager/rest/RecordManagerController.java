@@ -34,6 +34,6 @@ public class RecordManagerController extends RecordManagerExceptionHandler {
 
     @DeleteMapping
     public ResponseEntity<Object> deleteRecords(@RequestParam String parent) {
-        return ResponseEntity.ok(parent + " removed");
+        return recordManagerService.deleteRecords(parent);
     }
 }

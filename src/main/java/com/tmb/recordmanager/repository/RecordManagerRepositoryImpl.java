@@ -38,4 +38,12 @@ public class RecordManagerRepositoryImpl implements RecordManagerRepository {
     public void save(Record record) {
         entityManager.persist(record);
     }
+
+    @Override
+    public void deleteRecord(String parent) {
+        Record record = this.getRecord(parent);
+        entityManager.remove(record);
+        entityManager.flush();
+        entityManager.clear();
+    }
 }
