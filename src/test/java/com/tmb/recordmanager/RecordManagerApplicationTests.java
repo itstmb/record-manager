@@ -162,6 +162,11 @@ class RecordManagerApplicationTests {
     public void deleteRootRecord() {
         addValidRecordsWithParent();
         HashSet<Record> expectedRecords = new HashSet<>();
+        ArrayList<String> emptyList = new ArrayList<>();
+        ArrayList<String> rootLevelNodes = new ArrayList<>(Collections.singletonList("parent_record"));
+        ArrayList<String> childNodes = new ArrayList<>(Arrays.asList("record11", "record12", "record13"));
+
+        Mockito.when(query.getResultList()).thenReturn(rootLevelNodes, childNodes, emptyList, emptyList, emptyList);
 
         ResponseEntity<Object> response = recordManagerController.deleteRecords(null);
 
