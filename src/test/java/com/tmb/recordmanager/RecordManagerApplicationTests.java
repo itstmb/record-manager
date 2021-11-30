@@ -90,7 +90,7 @@ class RecordManagerApplicationTests {
         String parent = "parent_record";
         recordManagerController.addRecords(Collections.singletonList(parent), null);
 
-        ArrayList<String> recordsToSave = new ArrayList<>(Arrays.asList("record1", "record2", "record3"));
+        ArrayList<String> recordsToSave = new ArrayList<>(Arrays.asList("record11", "record12", "record13"));
 
         HashSet<Record> expectedRecords = new HashSet<>();
         expectedRecords.add(new Record(parent, null));
@@ -160,11 +160,18 @@ class RecordManagerApplicationTests {
 
     @Test
     public void deleteRootRecord() {
+        addValidRecordsWithParent();
+        HashSet<Record> expectedRecords = new HashSet<>();
 
+        ResponseEntity<Object> response = recordManagerController.deleteRecords(null);
+
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(expectedRecords, entityManagerMock.getItems());
     }
 
     @Test
     public void deleteNonexistingRecord() {
-
+        Assertions.assertThrows(ValidationException.class,
+                () -> recordManagerController.deleteRecords("nonexistingRecord"));
     }
 }

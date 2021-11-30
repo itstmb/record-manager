@@ -61,14 +61,17 @@ public class RecordManagerServiceImpl implements RecordManagerService {
     }
 
     private int deleteRecordAndChildren(String parent) {
-        int removedCounter = 1;
+        int removedCounter = 0;
         List<String> records = this.recordManagerRepository.getRecords(parent);
 
         for (String recordName : records) {
             removedCounter += deleteRecordAndChildren(recordName);
         }
 
-        this.recordManagerRepository.deleteRecord(parent);
+        if (parent != null) {
+            this.recordManagerRepository.deleteRecord(parent);
+            removedCounter++;
+        }
         return removedCounter;
     }
 }

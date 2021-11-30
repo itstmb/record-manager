@@ -21,11 +21,6 @@ public class RecordManagerController extends RecordManagerExceptionHandler {
         return recordManagerService.getRecords(parent);
     }
 
-    @GetMapping(value = "/all")
-    public ResponseEntity<Object> getAllRecords(@RequestParam String parent) {
-        return ResponseEntity.ok(parent);
-    }
-
     @PutMapping
     public ResponseEntity<Object> addRecords(@RequestParam List<String> records,
                                              @RequestParam(required = false) String parent) {
@@ -33,7 +28,7 @@ public class RecordManagerController extends RecordManagerExceptionHandler {
     }
 
     @DeleteMapping
-    public ResponseEntity<Object> deleteRecords(@RequestParam String parent) {
+    public ResponseEntity<Object> deleteRecords(@RequestParam(required = false) String parent) {
         return recordManagerService.deleteRecords(parent);
     }
 }
